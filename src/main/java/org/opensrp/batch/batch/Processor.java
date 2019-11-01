@@ -18,7 +18,7 @@ public class Processor implements ItemProcessor<Users, Users> {
 	public Users process(Users user) throws Exception {
 		
 		Optional<Users> userFromDb = userRepo.findById(user.getUserId());
-		System.err.println(userFromDb);
+		
 		if (userFromDb.isPresent()) {
 			System.err.println("oo");
 			user.setAccount(user.getAccount().add(userFromDb.get().getAccount()));
