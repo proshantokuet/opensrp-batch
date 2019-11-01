@@ -10,14 +10,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class Writer implements ItemWriter<Users>{
+public class WriterTM implements ItemWriter<Users> {
 	
 	@Autowired
 	private UsersRepository repo;
-
+	
 	@Override
 	@Transactional
 	public void write(List<? extends Users> users) throws Exception {
+		System.err.println(users);
 		repo.saveAll(users);
 	}
 	
