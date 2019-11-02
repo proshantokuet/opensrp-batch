@@ -1,6 +1,7 @@
 package org.opensrp.batch;
 
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -24,7 +25,7 @@ public class JobInvokerController {
 		
 		JobParameters jobParameters = new JobParametersBuilder().addString("source", System.currentTimeMillis() + "")
 		        .addString("query", "SELECT id, name FROM customer").toJobParameters();
-		jobLauncher.run(accountKeeperJob, jobParameters);
+		JobExecution execution = jobLauncher.run(accountKeeperJob, jobParameters);
 		
 		return "Batch job has been invoked";
 	}

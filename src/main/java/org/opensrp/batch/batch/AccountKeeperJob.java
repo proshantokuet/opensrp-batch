@@ -8,11 +8,16 @@ import javax.sql.DataSource;
 import org.opensrp.batch.entity.Users;
 import org.opensrp.batch.repository.UsersRepository;
 import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
@@ -22,11 +27,14 @@ import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+@Configuration
+@EnableBatchProcessing
 @Component
-public class AccountKeeperJob extends JobExecutionListenerSupport {
+public class AccountKeeperJob extends JobExecutionListenerSupport implements StepExecutionListener {
 	
 	@Autowired
 	JobBuilderFactory jobBuilderFactory;
@@ -54,7 +62,7 @@ public class AccountKeeperJob extends JobExecutionListenerSupport {
 	@Bean(name = "accountJob")
 	public Job accountKeeperJob() {
 		
-		Step step = stepBuilderFactory.get("step-1").<Users, Users> chunk(1).reader(reader()).processor(processor)
+		Step step = stepBuilderFactory.get("step-1").<Users, Users> chunk(10).reader(reader(null)).processor(processor)
 		        .writer(writer()).build();
 		
 		Job job = jobBuilderFactory.get(System.currentTimeMillis() + "").incrementer(new RunIdIncrementer()).listener(this)
@@ -64,11 +72,15 @@ public class AccountKeeperJob extends JobExecutionListenerSupport {
 		return job;
 	}
 	
-	public JdbcCursorItemReader<Users> reader() {
-		
+	@Bean
+	@StepScope
+	public JdbcCursorItemReader<Users> reader(@Value("#{jobParameters['query']}") String query) {
+		System.err.println("re:" + query);
 		JdbcCursorItemReader<Users> reader = new JdbcCursorItemReader<Users>();
 		reader.setDataSource(dataSource);
-		reader.setSql("SELECT id, name FROM customer");
+		//reader.setSql("SELECT id, name FROM customer");
+		reader.setSql(query);
+		
 		reader.setRowMapper(new UserRowMapper());
 		
 		return reader;
@@ -76,8 +88,8 @@ public class AccountKeeperJob extends JobExecutionListenerSupport {
 	
 	@Override
 	public void beforeJob(JobExecution jobExecution) {
-		System.err.println("befores:" + jobExecution.getJobParameters().getString("query"));
-		this.param = jobExecution.getJobParameters().getString("query");
+		//System.err.println("befores:" + jobExecution.getJobParameters().getString("query"));
+		//this.param = jobExecution.getJobParameters().getString("query");
 	}
 	
 	@Override
@@ -119,4 +131,17 @@ public class AccountKeeperJob extends JobExecutionListenerSupport {
 		
 		return writer;
 	}
+	
+	@Override
+	public void beforeStep(StepExecution stepExecution) {
+		System.err.println("NNNNNNNNNn");
+		
+	}
+	
+	@Override
+	public ExitStatus afterStep(StepExecution stepExecution) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }
