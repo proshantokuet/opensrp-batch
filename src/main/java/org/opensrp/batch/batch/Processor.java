@@ -1,28 +1,24 @@
 package org.opensrp.batch.batch;
 
-import java.util.Optional;
-
-import org.opensrp.batch.entity.Users;
-import org.opensrp.batch.repository.UsersRepository;
+import org.opensrp.batch.entity.DataExport;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Processor implements ItemProcessor<Users, Users> {
+public class Processor implements ItemProcessor<DataExport, DataExport> {
 	
-	@Autowired
-	private UsersRepository userRepo;
+	/*@Autowired
+	private UsersRepository userRepo;*/
 	
 	@Override
-	public Users process(Users user) throws Exception {
+	public DataExport process(DataExport user) throws Exception {
 		
-		Optional<Users> userFromDb = userRepo.findById(user.getUserId());
+		/*Optional<DataExport> userFromDb = userRepo.findById(user.getUserId());
 		
 		if (userFromDb.isPresent()) {
 			System.err.println("oo");
 			user.setAccount(user.getAccount().add(userFromDb.get().getAccount()));
-		}
+		}*/
 		return user;
 	}
 	

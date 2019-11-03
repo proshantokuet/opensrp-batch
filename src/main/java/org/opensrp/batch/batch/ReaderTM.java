@@ -1,13 +1,13 @@
 package org.opensrp.batch.batch;
 
-import org.opensrp.batch.entity.Users;
+import org.opensrp.batch.entity.DataExport;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.core.io.Resource;
 
-public class ReaderTM extends FlatFileItemReader<Users> {
+public class ReaderTM extends FlatFileItemReader<DataExport> {
 	
 	public ReaderTM(Resource resource) {
 		
@@ -20,10 +20,10 @@ public class ReaderTM extends FlatFileItemReader<Users> {
 		lineTokenizer.setDelimiter(",");
 	    lineTokenizer.setStrict(false);
 	    
-	    BeanWrapperFieldSetMapper<Users> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
-        fieldSetMapper.setTargetType(Users.class);
+	    BeanWrapperFieldSetMapper<DataExport> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
+        fieldSetMapper.setTargetType(DataExport.class);
 
-		DefaultLineMapper<Users> defaultLineMapper = new DefaultLineMapper<>();
+		DefaultLineMapper<DataExport> defaultLineMapper = new DefaultLineMapper<>();
 		defaultLineMapper.setLineTokenizer(lineTokenizer);
 		defaultLineMapper.setFieldSetMapper(fieldSetMapper);
 		setLineMapper(defaultLineMapper);
