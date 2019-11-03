@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
 import org.opensrp.batch.entity.DataExport;
@@ -26,8 +27,11 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
@@ -37,6 +41,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.stereotype.Component;
 
 @Configuration
@@ -86,8 +91,11 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 	@Autowired
 	private ChildHeader childHeader;
 	
-	/*@Autowired
-	private EntityManager em;*/
+	@Autowired
+	private EntityManager em;
+	
+	@Autowired
+	JobRepository jobRepository;
 	
 	@Bean(name = "accountJob")
 	public Job accountKeeperJob() {
@@ -102,16 +110,28 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 		return job;
 	}
 	
+	@Bean(name = "myJobLauncher")
+	public JobLauncher simpleJobLauncher() throws Exception {
+		SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+		jobLauncher.setJobRepository(jobRepository);
+		jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
+		jobLauncher.afterPropertiesSet();
+		return jobLauncher;
+	}
+	
 	@Bean
 	@StepScope
 	public JdbcCursorItemReader<DataExport> reader(@Value("#{jobParameters['query']}") String query,
 	                                               @Value("#{jobParameters['batch']}") String batch,
 	                                               @Value("#{jobParameters['formName']}") String formName) {
 		
-		//Query q = (Query) em.createNativeQuery("SELECT a.firstname, a.lastname FROM Author a");
-		
-		//System.err.println("readerSK:" + readerSK.toString());
-		
+		/*javax.persistence.Query q = em
+		        .createNativeQuery("SELECT new org.opensrp.batch.entity.SK(id, username) FROM core.\"users\"");
+		List<SK> authors = q.getResultList();
+		System.err.println("readerSK:" + authors.toString());
+		for (SK sk : authors) {
+			System.err.println("Name:" + sk.getUsername());
+		}*/
 		JdbcCursorItemReader<DataExport> reader = new JdbcCursorItemReader<DataExport>();
 		reader.setDataSource(dataSource);
 		

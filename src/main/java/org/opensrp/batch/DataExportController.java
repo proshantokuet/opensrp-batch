@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DataExportController {
 	
 	@Autowired
+	@Qualifier("myJobLauncher")
 	JobLauncher jobLauncher;
 	
 	@Autowired
