@@ -3,6 +3,8 @@ package org.opensrp.batch;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.opensrp.batch.utils.FormNameUtil;
+import org.opensrp.batch.utils.SelectField;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -34,38 +36,29 @@ public class DataExportController {
 	@Value("${member.form.name}")
 	String memberFormName;
 	
+	@Autowired
+	private SelectField selectField;
+	
+	@Autowired
+	private FormNameUtil formNameUtil;
+	
 	@RequestMapping("/data-export")
 	public String export(@RequestParam(name = "user", required = true) String user,
+	                     @RequestParam(name = "user_type", required = true) String userType,
 	                     @RequestParam(name = "start", required = true) String start,
 	                     @RequestParam(name = "end", required = true) String end,
-	                     @RequestParam(name = "batch") String batch, @RequestParam(name = "sk") String sk,
+	                     @RequestParam(name = "branch") String branch, @RequestParam(name = "sk") String sk,
 	                     @RequestParam(name = "form_name", required = true) String formName) throws Exception {
-		String row = "";
-		String where = "";
-		String fileName = "";
 		
-		if (formName.equalsIgnoreCase(householdFormName)) {
-			System.err.println("formName" + formName);
-			row = "id,hh_name, hh_number,hh_number_of_members,ss_name,cluster_name,hh_type,hh_phone_number,hh_number_of_members,hh_has_latrine";
-			fileName = "HHReg_" + start + "_" + end + ".xlsx";
-			
-		} else if (formName.equalsIgnoreCase(memberFormName)) {
-			row = "id,hh_name, unique_id,relation_with_hoh,mother_name,mobile_number,id_type,nid,birthregistrationid,dob_known,dob,age,gender,marital_status,blood_group";
-			fileName = "MemberReg_" + start + "_" + end + ".xlsx";
-		} else if (formName.equalsIgnoreCase(childFormName)) {
-			row = "id,hh_name, unique_id,relation_with_hoh,mother_name,dob,gender,blood_group";
-			fileName = "ChildReg_" + start + "_" + end + ".xlsx";
-		} else {
-			
-		}
+		String fileName = formNameUtil.getFormName(formName, start, end);
 		
+		String selectedField = selectField.getSelectField(formName);
 		JobParameters jobParameters = new JobParametersBuilder()
 		        .addString("source", System.currentTimeMillis() + "")
-		        .addString(
-		            "query",
-		            "SELECT " + row + " FROM core.\"viewJsonDataConversionOfClient\" where "
-		                    + whereClause(start, end, formName)).addString("user", user).addString("fileName", fileName)
-		        .addString("formName", formName).addString("batch", batch).toJobParameters();
+		        .addString("query",
+		            "SELECT * FROM core.\"viewJsonDataConversionOfClient\" where " + whereClause(start, end, formName))
+		        .addString("user", user).addString("userType", userType).addString("fileName", fileName)
+		        .addString("formName", formName).addString("branch", branch).toJobParameters();
 		jobLauncher.run(dataExportJob, jobParameters);
 		
 		return "Batch job has been invoked";

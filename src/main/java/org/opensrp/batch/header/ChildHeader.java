@@ -11,7 +11,7 @@ public class ChildHeader implements FlatFileHeaderCallback {
 	
 	@Override
 	public void writeHeader(Writer writer) throws IOException {
-		writer.write("Id, Member Number, Member Name, Relation with HOH, Mother Name, Date of Birth, Gender, Blood Group");
+		writer.write("Id, Member Number, Member Name, Relation with HOH, Mother Name, Date of Birth, Gender, Blood Group,Date Created,Provider");
 		
 	}
 }

@@ -49,6 +49,36 @@ public class DataExport {
 	
 	private String memberNumber;
 	
+	private String provider;
+	
+	private String dateCreated;
+	
+	private String guid;
+	
+	public String getProvider() {
+		return provider;
+	}
+	
+	public void setProvider(String provider) {
+		this.provider = provider;
+	}
+	
+	public String getDateCreated() {
+		return dateCreated;
+	}
+	
+	public void setDateCreated(String dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+	
+	public String getGuid() {
+		return guid;
+	}
+	
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
 	public String getMemberNumber() {
 		return memberNumber;
 	}

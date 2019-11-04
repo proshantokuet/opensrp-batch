@@ -19,6 +19,8 @@ public class ChildRowMapper implements RowMapper<DataExport> {
 		export.setDateofBirth(rs.getString("dob"));
 		export.setGender(rs.getString("gender"));
 		export.setBloodGroup(rs.getString("blood_group"));
+		export.setProvider(rs.getString("provider_id"));
+		export.setDateCreated(rs.getString("date_created"));
 		return export;
 	}
 }

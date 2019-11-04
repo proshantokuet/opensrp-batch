@@ -20,7 +20,8 @@ public class HouseholdRowMapper implements RowMapper<DataExport> {
 		export.setName(rs.getString("hh_name"));
 		export.setMemberCount(rs.getString("hh_number_of_members"));
 		export.setHasLatrine(rs.getString("hh_has_latrine"));
-		
+		export.setProvider(rs.getString("provider_id"));
+		export.setDateCreated(rs.getString("date_created"));
 		return export;
 	}
 }

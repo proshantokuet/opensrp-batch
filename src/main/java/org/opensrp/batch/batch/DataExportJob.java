@@ -1,12 +1,16 @@
 package org.opensrp.batch.batch;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 
+import org.opensrp.batch.dto.BranchDTO;
+import org.opensrp.batch.dto.UserDTO;
 import org.opensrp.batch.entity.DataExport;
 import org.opensrp.batch.entity.Export;
 import org.opensrp.batch.header.ChildHeader;
@@ -92,16 +96,22 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 	private ChildHeader childHeader;
 	
 	@Autowired
+	JobRepository jobRepository;
+	
+	@Autowired
 	private EntityManager em;
 	
 	@Autowired
-	JobRepository jobRepository;
+	private UserDTO userDTO;
+	
+	@Autowired
+	private BranchDTO branchDTO;
 	
 	@Bean(name = "accountJob")
 	public Job accountKeeperJob() {
 		
-		Step step = stepBuilderFactory.get("step-1").<DataExport, DataExport> chunk(10).reader(reader(null, null, null))
-		        .processor(processor).writer(writer(null, null)).build();
+		Step step = stepBuilderFactory.get("step-1").<DataExport, DataExport> chunk(10)
+		        .reader(reader(null, 0, null, null, null)).processor(processor).writer(writer(null, null)).build();
 		
 		Job job = jobBuilderFactory.get(System.currentTimeMillis() + "").incrementer(new RunIdIncrementer()).listener(this)
 		        .start(step).build();
@@ -122,19 +132,23 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 	@Bean
 	@StepScope
 	public JdbcCursorItemReader<DataExport> reader(@Value("#{jobParameters['query']}") String query,
-	                                               @Value("#{jobParameters['batch']}") String batch,
-	                                               @Value("#{jobParameters['formName']}") String formName) {
+	                                               @Value("#{jobParameters['branch']}") int branch,
+	                                               @Value("#{jobParameters['formName']}") String formName,
+	                                               @Value("#{jobParameters['user']}") String user,
+	                                               @Value("#{jobParameters['userType']}") String userType) {
 		
-		/*javax.persistence.Query q = em
-		        .createNativeQuery("SELECT new org.opensrp.batch.entity.SK(id, username) FROM core.\"users\"");
-		List<SK> authors = q.getResultList();
-		System.err.println("readerSK:" + authors.toString());
-		for (SK sk : authors) {
-			System.err.println("Name:" + sk.getUsername());
-		}*/
+		int userId = userDTO.getUserIdByUserName(user);
+		System.err.println("UserId:" + userId);
+		List<Integer> branchList = branchDTO.getBranchByUser(userId);
+		System.err.println("branchList:" + branchList);
+		List<Integer> branches = new ArrayList<Integer>();
+		//branches.add(9);
+		branches.add(7);
+		String sks = userDTO.getUserNames(branchList);
+		System.err.println(sks);
 		JdbcCursorItemReader<DataExport> reader = new JdbcCursorItemReader<DataExport>();
 		reader.setDataSource(dataSource);
-		
+		query = query + " and provider_id in (" + sks + ")";
 		reader.setSql(query);
 		if (formName.equalsIgnoreCase(householdFormName)) {
 			reader.setRowMapper(new HouseholdRowMapper());
@@ -171,7 +185,7 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 		
 		if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
 			Optional<Export> export = repo.findById(jobExecution.getId());
-			//Export export = new Export();
+			
 			String fileName = jobExecution.getJobParameters().getString("fileName");
 			export.get().setJobId(jobExecution.getId());
 			export.get().setFileName(fileName);
@@ -215,14 +229,14 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 					{
 						if (formName.equalsIgnoreCase(householdFormName)) {
 							setNames(new String[] { "Id", "householdNumber", "SSName", "villageName", "cluster",
-							        "householdType", "name", "memberCount", "hasLatrine" });
+							        "householdType", "name", "memberCount", "hasLatrine", "provider", "dateCreated" });
 						} else if (formName.equalsIgnoreCase(memberFormName)) {
 							setNames(new String[] { "Id", "memberNumber", "name", "relationwithHOH", "motherName",
 							        "mobileNumber", "idType", "NIDNumber", "birthIdNumber", "DOBKnown", "dateofBirth",
-							        "age", "gender", "maritalStatus", "bloodGroup" });
+							        "age", "gender", "maritalStatus", "bloodGroup", "provider", "dateCreated"/*, "guid"*/});
 						} else if (formName.equalsIgnoreCase(childFormName)) {
 							setNames(new String[] { "Id", "memberNumber", "name", "relationwithHOH", "motherName",
-							        "dateofBirth", "gender", "bloodGroup" });
+							        "dateofBirth", "gender", "bloodGroup", "provider", "dateCreated" });
 						}
 					}
 				});

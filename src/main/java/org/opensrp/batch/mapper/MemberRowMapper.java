@@ -26,6 +26,9 @@ public class MemberRowMapper implements RowMapper<DataExport> {
 		export.setGender(rs.getString("gender"));
 		export.setMaritalStatus(rs.getString("marital_status"));
 		export.setBloodGroup(rs.getString("blood_group"));
+		export.setProvider(rs.getString("provider_id"));
+		export.setDateCreated(rs.getString("date_created"));
+		//export.setDateCreated(rs.getString("gu_id"));
 		return export;
 	}
 }
