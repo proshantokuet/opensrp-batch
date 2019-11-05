@@ -4,9 +4,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.opensrp.batch.entity.DataExport;
+import org.opensrp.batch.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 
 public class HouseholdRowMapper implements RowMapper<DataExport> {
+	
+	@Autowired
+	private DateUtils dateUtil;
 	
 	@Override
 	public DataExport mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -21,7 +26,7 @@ public class HouseholdRowMapper implements RowMapper<DataExport> {
 		export.setMemberCount(rs.getString("hh_number_of_members"));
 		export.setHasLatrine(rs.getString("hh_has_latrine"));
 		export.setProvider(rs.getString("provider_id"));
-		export.setDateCreated(rs.getString("date_created"));
+		export.setDateCreated(DateUtils.getDateAsYYYYMMddHHMMSS(rs.getString("date_created")));
 		return export;
 	}
 }

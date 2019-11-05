@@ -11,7 +11,7 @@ public class FamilyHeader implements FlatFileHeaderCallback {
 	
 	@Override
 	public void writeHeader(Writer writer) throws IOException {
-		writer.write("Id,Household Number,SS Name,Village Name,Cluster,Household Type,Household Name,Number of Household Member,Has Latrine,Date Created,Provider");
+		writer.write("Id,Household Number,SS Name,Village Name,Cluster,Household Type,Household Name,Number of Household Member,Has Latrine,Provider,Date Created");
 		/*writer.write("Household Number,");
 		writer.write("SS Name,");
 		writer.write("Village Name,");

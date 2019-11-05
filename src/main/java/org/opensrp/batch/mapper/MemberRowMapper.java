@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.opensrp.batch.entity.DataExport;
+import org.opensrp.batch.utils.DateUtils;
 import org.springframework.jdbc.core.RowMapper;
 
 public class MemberRowMapper implements RowMapper<DataExport> {
@@ -27,8 +28,9 @@ public class MemberRowMapper implements RowMapper<DataExport> {
 		export.setMaritalStatus(rs.getString("marital_status"));
 		export.setBloodGroup(rs.getString("blood_group"));
 		export.setProvider(rs.getString("provider_id"));
-		export.setDateCreated(rs.getString("date_created"));
-		//export.setDateCreated(rs.getString("gu_id"));
+		
+		export.setDateCreated(DateUtils.getDateAsYYYYMMddHHMMSS(rs.getString("date_created")));
+		export.setGuid(rs.getString("gu_id"));
 		return export;
 	}
 }

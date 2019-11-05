@@ -1,9 +1,7 @@
 package org.opensrp.batch.batch;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -20,6 +18,7 @@ import org.opensrp.batch.mapper.ChildRowMapper;
 import org.opensrp.batch.mapper.HouseholdRowMapper;
 import org.opensrp.batch.mapper.MemberRowMapper;
 import org.opensrp.batch.repository.DataExportRepository;
+import org.opensrp.batch.utils.ExtractSK;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -107,11 +106,14 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 	@Autowired
 	private BranchDTO branchDTO;
 	
+	@Autowired
+	private ExtractSK extractSK;
+	
 	@Bean(name = "accountJob")
 	public Job accountKeeperJob() {
 		
-		Step step = stepBuilderFactory.get("step-1").<DataExport, DataExport> chunk(10)
-		        .reader(reader(null, 0, null, null, null)).processor(processor).writer(writer(null, null)).build();
+		Step step = stepBuilderFactory.get("step-1").<DataExport, DataExport> chunk(10000)
+		        .reader(reader(null, 0, null, null, null, null)).processor(processor).writer(writer(null, null)).build();
 		
 		Job job = jobBuilderFactory.get(System.currentTimeMillis() + "").incrementer(new RunIdIncrementer()).listener(this)
 		        .start(step).build();
@@ -134,21 +136,18 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 	public JdbcCursorItemReader<DataExport> reader(@Value("#{jobParameters['query']}") String query,
 	                                               @Value("#{jobParameters['branch']}") int branch,
 	                                               @Value("#{jobParameters['formName']}") String formName,
-	                                               @Value("#{jobParameters['user']}") String user,
-	                                               @Value("#{jobParameters['userType']}") String userType) {
+	                                               @Value("#{jobParameters['user']}") String userName,
+	                                               @Value("#{jobParameters['userType']}") String userType,
+	                                               @Value("#{jobParameters['sk']}") String skName) {
 		
-		int userId = userDTO.getUserIdByUserName(user);
-		System.err.println("UserId:" + userId);
-		List<Integer> branchList = branchDTO.getBranchByUser(userId);
-		System.err.println("branchList:" + branchList);
-		List<Integer> branches = new ArrayList<Integer>();
-		//branches.add(9);
-		branches.add(7);
-		String sks = userDTO.getUserNames(branchList);
-		System.err.println(sks);
+		String sks = extractSK.getSKs(userName, userType, branch, skName);
+		System.err.println("SK:" + sks);
 		JdbcCursorItemReader<DataExport> reader = new JdbcCursorItemReader<DataExport>();
 		reader.setDataSource(dataSource);
-		query = query + " and provider_id in (" + sks + ")";
+		if (!sks.isEmpty()) {
+			query = query + " and provider_id in (" + sks + ")";
+		}
+		System.err.println("Query" + query);
 		reader.setSql(query);
 		if (formName.equalsIgnoreCase(householdFormName)) {
 			reader.setRowMapper(new HouseholdRowMapper());
@@ -176,8 +175,7 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 		
 		repo.save(export);
 		System.err.println("URS:" + export);
-		//System.err.println("befores:" + jobExecution.getJobParameters().getString("query"));
-		//this.param = jobExecution.getJobParameters().getString("query");
+		
 	}
 	
 	@Override
@@ -189,12 +187,17 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 			String fileName = jobExecution.getJobParameters().getString("fileName");
 			export.get().setJobId(jobExecution.getId());
 			export.get().setFileName(fileName);
-			export.get().setCreatedDate(new Date());
-			export.get().setCreator("pro");
-			export.get().setStatus("Processing");
 			export.get().setStatus("Completed");
 			repo.save(export.get());
-			System.err.println("URS:" + export);
+			
+			System.err.println("BATCH JOB COMPLETED SUCCESSFULLY");
+		} else {
+			Optional<Export> export = repo.findById(jobExecution.getId());
+			String fileName = jobExecution.getJobParameters().getString("fileName");
+			export.get().setJobId(jobExecution.getId());
+			export.get().setFileName(fileName);
+			export.get().setStatus(jobExecution.getStatus().name());
+			repo.save(export.get());
 			System.err.println("BATCH JOB COMPLETED SUCCESSFULLY");
 		}
 	}
@@ -233,7 +236,7 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 						} else if (formName.equalsIgnoreCase(memberFormName)) {
 							setNames(new String[] { "Id", "memberNumber", "name", "relationwithHOH", "motherName",
 							        "mobileNumber", "idType", "NIDNumber", "birthIdNumber", "DOBKnown", "dateofBirth",
-							        "age", "gender", "maritalStatus", "bloodGroup", "provider", "dateCreated"/*, "guid"*/});
+							        "age", "gender", "maritalStatus", "bloodGroup", "provider", "dateCreated", "guid" });
 						} else if (formName.equalsIgnoreCase(childFormName)) {
 							setNames(new String[] { "Id", "memberNumber", "name", "relationwithHOH", "motherName",
 							        "dateofBirth", "gender", "bloodGroup", "provider", "dateCreated" });

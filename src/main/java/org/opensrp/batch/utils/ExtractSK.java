@@ -24,37 +24,44 @@ public class ExtractSK {
 	@Value("${user.type.am}")
 	String AM;
 	
-	public String getSKsForAdmin(String userName, String userType, String branch, String skName) {
+	public String getSKs(String userName, String userType, int branch, String skName) {
+		System.err.println("USerType" + userType);
+		List<Integer> branchId = new ArrayList<Integer>();
 		String skUserNames = "";
 		if (userType.equalsIgnoreCase(ADMIN)) {
-			if (branch.isEmpty() && skName.isEmpty()) {
+			if (branch == 0 && skName.isEmpty()) {
 				skUserNames = "";
-			} else if (!branch.isEmpty() && !skName.isEmpty()) {
-				skUserNames += "'" + skName + "',";
-			} else if (!branch.isEmpty() && skName.isEmpty()) {
-				List<Integer> branchId = new ArrayList<Integer>();
+			} else if (branch != 0 && !skName.isEmpty()) {
+				skUserNames += "'" + skName + "'";
+			} else if (branch != 0 && skName.isEmpty()) {
+				branchId.add(branch);
 				skUserNames = userDTO.getUserNames(branchId);
 			} else {
 				
 			}
 			
 		} else if (userType.equalsIgnoreCase(AM)) {
-			if (!branch.isEmpty() && skName.isEmpty()) {
+			if (branch == 0 && skName.isEmpty()) {
 				int userId = userDTO.getUserIdByUserName(userName);
 				List<Integer> branchList = branchDTO.getBranchByUser(userId);
 				skUserNames = userDTO.getUserNames(branchList);
+			} else if (branch != 0 && !skName.isEmpty()) {
+				skUserNames += "'" + skName + "'";
+			} else if (branch != 0 && skName.isEmpty()) {
+				branchId.add(branch);
+				skUserNames = userDTO.getUserNames(branchId);
 			}
 		} else {
-			
+			System.err.println("NO found");
 		}
 		
-		int userId = userDTO.getUserIdByUserName(userName);
+		/*int userId = userDTO.getUserIdByUserName(userName);
 		System.err.println("UserId:" + userId);
 		List<Integer> branchList = branchDTO.getBranchByUser(userId);
 		System.err.println("branchList:" + branchList);
 		
 		String sks = userDTO.getUserNames(branchList);
-		System.err.println(sks);
+		System.err.println(sks);*/
 		
 		return skUserNames;
 	}

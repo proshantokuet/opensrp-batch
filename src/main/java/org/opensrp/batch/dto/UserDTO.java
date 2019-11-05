@@ -41,18 +41,17 @@ public class UserDTO {
 	}
 	
 	public int getUserIdByUserName(String userName) {
-		String userId = "";
-		javax.persistence.Query q = em
-		        .createNativeQuery("SELECT id,username FROM core.\"users\" where username = :userName");
+		int userId = 0;
+		javax.persistence.Query q = em.createNativeQuery("SELECT id FROM core.\"users\" where username = :userName");
 		q.setParameter("userName", userName);
 		
 		@SuppressWarnings("unchecked")
-		List<Object[]> branchList = q.getResultList();
-		for (Object[] branch : branchList) {
-			userId = "" + branch[0];
+		List<Integer> users = q.getResultList();
+		for (Integer user : users) {
+			userId = user;
 		}
 		
-		return Integer.parseInt(userId);
+		return userId;
 		
 	}
 }

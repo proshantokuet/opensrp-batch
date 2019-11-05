@@ -17,15 +17,15 @@ public class BranchDTO {
 	public List<Integer> getBranchByUser(int userId) {
 		List<Integer> branches = new ArrayList<Integer>();
 		javax.persistence.Query q = em
-		        .createNativeQuery("SELECT branch_id,user_id FROM core.\"user_branch\" where user_id = :userId");
+		        .createNativeQuery("SELECT branch_id FROM core.\"user_branch\" where user_id = :userId");
 		q.setParameter("userId", userId);
-		String batchId = "";
+		int batchId = 0;
 		@SuppressWarnings("unchecked")
-		List<Object[]> branchList = q.getResultList();
-		for (Object[] branch : branchList) {
-			batchId = "" + branch[0];
+		List<Integer> branchList = q.getResultList();
+		for (Integer branch : branchList) {
+			batchId = branch;
 			
-			branches.add(Integer.parseInt(batchId));
+			branches.add(batchId);
 		}
 		return branches;
 		
