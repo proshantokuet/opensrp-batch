@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 public class DateUtils {
 	
 	public static String getDateAsYYYYMMddHHMMSS(String date) {
-		System.err.println("date:" + date);
 		Date formatedDate;
 		String convertedDate = "";
 		try {
@@ -19,7 +18,7 @@ public class DateUtils {
 			
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			convertedDate = simpleDateFormat.format(formatedDate);
-			System.err.println("convertedDate:" + convertedDate);
+			
 		}
 		catch (ParseException e) {
 			// TODO Auto-generated catch block

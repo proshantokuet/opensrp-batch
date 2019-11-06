@@ -17,9 +17,9 @@ public class HouseholdRowMapper implements RowMapper<DataExport> {
 	public DataExport mapRow(ResultSet rs, int rowNum) throws SQLException {
 		DataExport export = new DataExport();
 		export.setId(rs.getString("id"));
-		export.setHouseholdNumber("\"" + rs.getString("hh_number") + "\"");
+		export.setHouseholdNumber("\'" + rs.getString("hh_number") + "\'");
 		export.setSSName(rs.getString("ss_name"));
-		export.setVillageName("vilagge");
+		export.setVillageName(rs.getString("village")); 
 		export.setCluster(rs.getString("cluster_name"));
 		export.setHouseholdType(rs.getString("hh_type"));
 		export.setName(rs.getString("hh_name"));

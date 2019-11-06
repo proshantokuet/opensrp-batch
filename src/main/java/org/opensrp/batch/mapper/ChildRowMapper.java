@@ -13,7 +13,7 @@ public class ChildRowMapper implements RowMapper<DataExport> {
 	public DataExport mapRow(ResultSet rs, int rowNum) throws SQLException {
 		DataExport export = new DataExport();
 		export.setId(rs.getString("id"));
-		export.setMemberNumber("\"" + rs.getString("unique_id") + "\"");
+		export.setMemberNumber("\'" + rs.getString("unique_id") + "\'");
 		export.setName(rs.getString("hh_name"));
 		export.setRelationwithHOH(rs.getString("relation_with_hoh"));
 		export.setMotherName(rs.getString("mother_name"));

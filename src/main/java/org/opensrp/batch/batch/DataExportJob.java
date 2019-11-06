@@ -109,15 +109,17 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 	@Autowired
 	private ExtractSK extractSK;
 	
+	public Long jobId;
+	
 	@Bean(name = "accountJob")
 	public Job accountKeeperJob() {
 		
-		Step step = stepBuilderFactory.get("step-1").<DataExport, DataExport> chunk(10000)
+		Step step = stepBuilderFactory.get("step-1").<DataExport, DataExport> chunk(5000)
 		        .reader(reader(null, 0, null, null, null, null)).processor(processor).writer(writer(null, null)).build();
 		
 		Job job = jobBuilderFactory.get(System.currentTimeMillis() + "").incrementer(new RunIdIncrementer()).listener(this)
 		        .start(step).build();
-		System.err.println("JobId:" + job.getName());
+		
 		//this.param = job.getJobParametersIncrementer().getNext("");
 		return job;
 	}
@@ -170,11 +172,13 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 		export.setJobId(jobExecution.getId());
 		export.setId(jobExecution.getId());
 		export.setCreatedDate(new Date());
+		export.setFileName("");
 		export.setCreator(user);
 		export.setStatus("Processing");
 		
 		repo.save(export);
 		System.err.println("URS:" + export);
+		this.jobId = jobExecution.getJobId();
 		
 	}
 	
@@ -186,7 +190,7 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 			
 			String fileName = jobExecution.getJobParameters().getString("fileName");
 			export.get().setJobId(jobExecution.getId());
-			export.get().setFileName(fileName);
+			export.get().setFileName(fileName + "_" + jobExecution.getJobId() + ".csv");
 			export.get().setStatus("Completed");
 			repo.save(export.get());
 			
@@ -206,9 +210,10 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 	@StepScope
 	public FlatFileItemWriter<DataExport> writer(@Value("#{jobParameters['formName']}") String formName,
 	                                             @Value("#{jobParameters['fileName']}") String fileName) {
+		System.err.println(jobId);
 		FlatFileItemWriter<DataExport> writer = new FlatFileItemWriter<DataExport>();
 		try {
-			resource = resource.createRelative(fileDir + fileName);
+			resource = resource.createRelative(fileDir + fileName + "_" + jobId + ".csv");
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block

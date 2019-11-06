@@ -19,18 +19,17 @@ public class FormNameUtil {
 	
 	public String getFormName(String formName, String start, String end) {
 		if (formName.equalsIgnoreCase(householdFormName)) {
-			fileName = "HHReg_" + start + "_" + end + ".xlsx";
+			fileName = "HHReg_" + start + "_" + end;
 			
 		} else if (formName.equalsIgnoreCase(memberFormName)) {
 			
-			fileName = "MemberReg_" + start + "_" + end + ".xlsx";
+			fileName = "MemberReg_" + start + "_" + end;
 		} else if (formName.equalsIgnoreCase(childFormName)) {
 			
-			fileName = "ChildReg_" + start + "_" + end + ".xlsx";
+			fileName = "ChildReg_" + start + "_" + end;
 		} else {
 			
 		}
 		return fileName;
 	}
-	
 }

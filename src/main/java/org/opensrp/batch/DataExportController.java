@@ -35,13 +35,13 @@ public class DataExportController {
 	Job dataExportJob;
 	
 	@Value("${household.form.name}")
-	String householdFormName;
+	static String householdFormName;
 	
 	@Value("${child.form.name}")
-	String childFormName;
+	static String childFormName;
 	
 	@Value("${member.form.name}")
-	String memberFormName;
+	static String memberFormName;
 	
 	@Autowired
 	private SelectField selectField;
@@ -57,8 +57,8 @@ public class DataExportController {
 	                                     @RequestParam(name = "end", required = true) String end,
 	                                     @RequestParam(name = "branch") String branch, @RequestParam(name = "sk") String sk,
 	                                     @RequestParam(name = "form_name", required = true) String formName) {
-		formName = formName.replace("-", " ");
-		;
+		System.err.println("formName:" + formName.trim());
+		formName = formName.trim();
 		try {
 			String fileName = formNameUtil.getFormName(formName, start, end);
 			
@@ -103,8 +103,8 @@ public class DataExportController {
 	private static Map<String, String> myMap = new HashMap<String, String>();
 	static {
 		
-		myMap.put("Household Registration", "ec_family");
-		myMap.put("Child Registration", "ec_child");
-		myMap.put("Member Registration", "ec_family_member");
+		myMap.put("Family-Registration", "ec_family");
+		myMap.put("Child-Registration", "ec_child");
+		myMap.put("Family-Member-Registration", "ec_family_member");
 	}
 }

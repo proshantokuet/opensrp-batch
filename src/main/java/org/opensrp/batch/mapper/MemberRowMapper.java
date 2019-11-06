@@ -13,14 +13,14 @@ public class MemberRowMapper implements RowMapper<DataExport> {
 	public DataExport mapRow(ResultSet rs, int rowNum) throws SQLException {
 		DataExport export = new DataExport();
 		export.setId(rs.getString("id"));
-		export.setMemberNumber("\"" + rs.getString("unique_id") + "\"");
+		export.setMemberNumber("\'" + rs.getString("unique_id") + "\'");
 		export.setName(rs.getString("hh_name"));
 		export.setRelationwithHOH(rs.getString("relation_with_hoh"));
 		export.setMotherName(rs.getString("mother_name"));
 		export.setMobileNumber(rs.getString("mobile_number"));
 		export.setIdType(rs.getString("id_type"));
-		export.setNIDNumber("\"" + rs.getString("nid") + "\"");
-		export.setBirthIdNumber("\"" + rs.getString("birthregistrationid") + "\"");
+		export.setNIDNumber("\'" + rs.getString("nid") + "\'");
+		export.setBirthIdNumber("\'" + rs.getString("birthregistrationid") + "\'");
 		export.setDOBKnown(rs.getString("dob_known"));
 		export.setDateofBirth(rs.getString("dob"));
 		export.setAge(rs.getString("age"));
