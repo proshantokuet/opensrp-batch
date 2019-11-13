@@ -237,14 +237,16 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 					{
 						if (formName.equalsIgnoreCase(householdFormName)) {
 							setNames(new String[] { "Id", "householdNumber", "SSName", "villageName", "cluster",
-							        "householdType", "name", "memberCount", "hasLatrine", "provider", "dateCreated" });
+							        "householdType", "name", "memberCount", "hasLatrine", "provider", "dateCreated", "union",
+									"upazila", "district"});
 						} else if (formName.equalsIgnoreCase(memberFormName)) {
-							setNames(new String[] { "Id", "memberNumber", "name", "relationwithHOH", "motherName",
-							        "mobileNumber", "idType", "NIDNumber", "birthIdNumber", "DOBKnown", "dateofBirth",
-							        "age", "gender", "maritalStatus", "bloodGroup", "provider", "dateCreated", "guid" });
+							setNames(new String[] { "Id", "memberNumber", "name", "relationWithHOH", "motherName",
+							        "mobileNumber", "idType", "NIDNumber", "birthIdNumber", "DOBKnown", "dateOfBirth",
+							        "age", "gender", "maritalStatus", "bloodGroup", "provider", "dateCreated", "guid", "villageName", "union",
+									"upazila", "district"});
 						} else if (formName.equalsIgnoreCase(childFormName)) {
-							setNames(new String[] { "Id", "memberNumber", "name", "relationwithHOH", "motherName",
-							        "dateofBirth", "gender", "bloodGroup", "provider", "dateCreated" });
+							setNames(new String[] { "Id", "memberNumber", "name", "relationWithHOH", "motherName",
+							        "dateOfBirth", "gender", "bloodGroup", "provider", "dateCreated", "villageName", "union", "upazila", "district" });
 						}
 					}
 				});

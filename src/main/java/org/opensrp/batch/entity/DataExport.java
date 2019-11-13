@@ -23,7 +23,7 @@ public class DataExport {
 	
 	private String hasLatrine;
 	
-	private String relationwithHOH;
+	private String relationWithHOH;
 	
 	private String motherName;
 	
@@ -45,7 +45,7 @@ public class DataExport {
 	
 	private String bloodGroup;
 	
-	private String dateofBirth;
+	private String dateOfBirth;
 	
 	private String memberNumber;
 	
@@ -54,7 +54,37 @@ public class DataExport {
 	private String dateCreated;
 	
 	private String guid;
-	
+
+	private String union;
+
+	private String upazila;
+
+	private String district;
+
+	public String getUnion() {
+		return union;
+	}
+
+	public void setUnion(String union) {
+		this.union = union;
+	}
+
+	public String getUpazila() {
+		return upazila;
+	}
+
+	public void setUpazila(String upazila) {
+		this.upazila = upazila;
+	}
+
+	public String getDistrict() {
+		return district;
+	}
+
+	public void setDistrict(String district) {
+		this.district = district;
+	}
+
 	public String getProvider() {
 		return provider;
 	}
@@ -167,12 +197,12 @@ public class DataExport {
 		this.bloodGroup = bloodGroup;
 	}
 	
-	public String getDateofBirth() {
-		return dateofBirth;
+	public String getDateOfBirth() {
+		return dateOfBirth;
 	}
 	
-	public void setDateofBirth(String dateofBirth) {
-		this.dateofBirth = dateofBirth;
+	public void setDateOfBirth(String dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 	
 	public String getId() {
@@ -247,12 +277,12 @@ public class DataExport {
 		this.hasLatrine = hasLatrine;
 	}
 	
-	public String getRelationwithHOH() {
-		return relationwithHOH;
+	public String getRelationWithHOH() {
+		return relationWithHOH;
 	}
 	
-	public void setRelationwithHOH(String relationwithHOH) {
-		this.relationwithHOH = relationwithHOH;
+	public void setRelationWithHOH(String relationWithHOH) {
+		this.relationWithHOH = relationWithHOH;
 	}
 	
 }
