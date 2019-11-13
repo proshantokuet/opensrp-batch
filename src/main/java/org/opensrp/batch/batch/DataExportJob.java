@@ -202,7 +202,7 @@ public class DataExportJob extends JobExecutionListenerSupport implements StepEx
 			export.get().setFileName(fileName);
 			export.get().setStatus(jobExecution.getStatus().name());
 			repo.save(export.get());
-			System.err.println("BATCH JOB COMPLETED SUCCESSFULLY");
+			
 		}
 	}
 	
