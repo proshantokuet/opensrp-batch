@@ -94,7 +94,7 @@ public class DataExportController {
 	
 	public String whereClause(String start, String end, String formName) {
 		String where = " Date(date_created) BETWEEN \'" + start + "\' AND \'" + end + "\' and entity_type = " + "\'"
-		        + myMap.get(formName) + "\'";
+		        + formName + "\'";
 		
 		return where;
 		

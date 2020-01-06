@@ -36,8 +36,8 @@ public class ExtractSK {
 			} else if (branch != 0 && skName.isEmpty()) {
 				branchId.add(branch);
 				skUserNames = userDTO.getUserNames(branchId);
-			} else {
-				
+			} else if (branch == 0 && !skName.isEmpty()){
+				skUserNames += "'" + skName + "'";
 			}
 			
 		} else if (userType.equalsIgnoreCase(AM)) {
